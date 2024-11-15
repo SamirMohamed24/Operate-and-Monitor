@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2021-02-01",
+      "location": "westeurope",
+      "name": "My_App_Service_Plan",
+      "sku": {
+        "Tier": "Basic",  // This defines the service tier
+        "Name": "B1"      // This specifies the specific SKU (B1 in this case)
+      },
+      "properties": {
+        "isLinux": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2021-02-01",
+      "location": "westeurope",
+      "properties": {
+        "name": "MyUniqueAppServiceName",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', 'My_App_Service_Plan')]",
+        "siteConfig": {
+          "linuxFxVersion": "PYTHON|3.9"
+        }
+      },
+      "name": "MyUniqueAppServiceName"
+    },
+    {
+      "type": "Microsoft.Consumption/budgets",
+      "apiVersion": "2023-05-01",
+      "name": "MyBudget",
+      "properties": {
+        "amount": 800,
+        "timeGrain": "Monthly",
+        "category": "Cost",
+        "timePeriod": {
+          "startDate": "2024-11-01T00:00:00Z",
+          "endDate": "2024-12-31T23:59:59Z"
+        },
+        "notifications": {
+          "80": {
+            "enabled": true,
+            "operator": "GreaterThan",
+            "threshold": 80,
+            "contactEmails": ["robin.kamo@iths.se"]
+          },
+          "100": {
+            "enabled": true,
+            "operator": "GreaterThan",
+            "threshold": 100,
+            "contactEmails": ["robin.kamo@iths.se"]
+          }
+        }
+      }
+    }
+  ]
+}
